@@ -1,0 +1,12 @@
+---
+artifact:
+  branch: "main"
+  name: "sales_project"
+  repo: "https://github.com/nerdcoder/sales_project.git"
+  version: "23d61e7"
+build:
+  directory: "/home/ec2-user/work/"
+  type: "docker"
+deploy:
+  local-port: 8000
+  external-port: 8090
