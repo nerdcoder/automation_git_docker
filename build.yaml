@@ -1,11 +1,11 @@
----
+
 artifact:
   branch: "main"
-  name: "sales_project"
-  repo: "https://github.com/nerdcoder/sales_project.git"
-  version: "23d61e7"
+  name: "health_project"
+  repo: "https://github.com/nerdcoder/health_project.git"
+  version: "v1.0"
 build:
-  directory: "/home/ec2-user/work/"
+  directory: "/home/ec2-user/task/"
   type: "docker"
 deploy:
   local-port: 8000
