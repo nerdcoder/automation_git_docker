@@ -1,15 +1,27 @@
-# Author : Biju S Nair
+
 import yaml
 import argparse
 
 from utils import git_utils
 from utils import docker_utils
 
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logname = "my_app.log"
+handler = TimedRotatingFileHandler(logname, when="midnight", interval=1)
+handler.suffix = "%Y-%m-%d"
+logger.addHandler(handler)
+
 
 def parse_build_yaml():
     yaml_args = dict()
 
     build_ymal = open("build.yaml")
+    logger.info("Opening build yaml file")
+
     deploy_obj = yaml.load(build_ymal, Loader=yaml.FullLoader)
     artifact = deploy_obj.get('artifact', '')
 
@@ -22,6 +34,7 @@ def parse_build_yaml():
     version = artifact.get('version', 'latest')
 
     if not repo_url:
+        logging.error("Repo url not found in build.yaml")
         raise Exception('Repo url not found in build.yaml')
 
     build_info = deploy_obj.get('build', '')
@@ -52,9 +65,11 @@ def build(deploy_args):
         # Clone the repo from git
         status, out, err = git_utils.clone_repo(deploy_args['repo_url'], deploy_args['synced_path'])
         if not status:
+            logging.error('Failed to clone the repo from git : \n{}'.format(err))
+
             raise Exception('Failed to clone the repo from git : \n{}'.format(err))
         print(out)
-
+        logger.info('After git process completed - {}'.format(out))
         # Build docker image
         docker_image = '{}:{}'.format(deploy_args['artifact_name'], deploy_args['docker_image_tag'])
         status, out, err = docker_utils.build_image(image=docker_image,
@@ -63,9 +78,11 @@ def build(deploy_args):
             raise Exception('Failed to build docker images : {}\n'.format(err))
 
         print(out)
+        logger.info('After docker build image - {}'.format(out))
 
     except Exception as ex:
         print(ex)
+        logger.exception('Exception - {}'.format(ex))
 
 
 def deploy(deploy_args):
@@ -77,12 +94,15 @@ def deploy(deploy_args):
                                                local_port=deploy_args['container_port'],
                                                external_port=deploy_args['external_port'])
         if not status:
+            logging.error('status invalid - {}'.format(status))
             raise Exception('Failed to start docker container : {}'.format(err))
+        logger.info('Deploying - {}'.format(out))
 
         print(out)
 
     except Exception as ex:
         print(str(ex))
+        logger.exception('Exception - {}'.format(ex))
 
 
 if __name__=="__main__":
