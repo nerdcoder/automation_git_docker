@@ -4,7 +4,7 @@ from logging.handlers import TimedRotatingFileHandler
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logname = "my_app.log"
+logname = "automate.log"
 handler = TimedRotatingFileHandler(logname, when="midnight", interval=1)
 handler.suffix = "%Y-%m-%d"
 logger.addHandler(handler)
