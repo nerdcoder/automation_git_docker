@@ -20,8 +20,8 @@ MKDIR_CMD = r'mkdir -p {}'
 def clone_repo(repo_url, target_dir):
     status = False
 
-    # rm_cmd = REMOVE_DIR_CMD.format(target_dir)
-    # os.system(rm_cmd)
+    rm_cmd = REMOVE_DIR_CMD.format(target_dir)
+    os.system(rm_cmd)
     mkdir_cmd = MKDIR_CMD.format(target_dir)
     os.system(mkdir_cmd)
     git_cmd = GIT_CMD.format(repo_url, target_dir)
